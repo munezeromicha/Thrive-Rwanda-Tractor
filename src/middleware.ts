@@ -65,5 +65,10 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/admin/:path*',  // Protect all admin routes
+    '/api/admin/:path*', // Protect admin API routes
+    '/api/auth/:path*', // Protect auth API routes
+    '/api/bookings/:path*', // Protect booking API routes
+    '/api/equipment/:path*', // Protect equipment API routes
+    '/api/payment/:path*', // Protect payment API routes
   ]
 };

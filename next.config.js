@@ -14,7 +14,13 @@ const nextConfig = {
       config.externals.push('mongoose');
     }
     return config;
-  }
+  },
+  // Disable build traces to prevent stack overflow
+  output: 'standalone',
+  // Configure static page generation
+  staticPageGenerationTimeout: 120,
+  // Configure dynamic routes
+  dynamicParams: true
 };
 
 module.exports = nextConfig;
