@@ -1,171 +1,111 @@
 'use client';
 
-import { useState, FormEvent, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
-import logo from '../../../../public/images/image/Final_logo.png';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/admin';
-  
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
-  
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (error) setError(null);
-  };
-  
-  const handleSubmit = async (e: FormEvent) => {
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.email || !formData.password) {
-      setError('Email and password are required');
-      return;
-    }
-    
+    setError('');
     setLoading(true);
-    
+
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
-      }
-      
-      router.push(redirect);
-      router.refresh();
-    } catch (error: any) {
-      setError(error.message || 'Login failed');
+      await login(formData.email, formData.password);
+      router.push('/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to login');
+    } finally {
       setLoading(false);
     }
   };
-  
+
   return (
-    <div className="min-h-screen bg-[#F7FEF9] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <Link href="/" className="inline-flex items-center justify-center">
-            <Image
-              src={logo}
-              alt="Thrive Africa Tractor"
-              width={100}
-              height={100}
-              className="mx-auto"
-            />
-          </Link>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Admin Login
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Log in to access the admin dashboard
-          </p>
-        </div>
-        
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          {error && (
-            <div className="bg-red-50 text-red-700 p-4 rounded-md mb-6">
-              {error}
-            </div>
-          )}
-          
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Sign in to your account
+        </h2>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
+                {error}
+              </div>
+            )}
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email Address
+                Email address
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#166534] focus:border-transparent"
-                placeholder="admin@thriveafrica.com"
-              />
+              <div className="mt-1">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                />
+              </div>
             </div>
-            
+
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#166534] focus:border-transparent"
-                placeholder="••••••••"
-              />
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
+              <div className="mt-1">
                 <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-[#166534] focus:ring-[#166534] border-gray-300 rounded"
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500"
                 />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Remember me
-                </label>
-              </div>
-              
-              <div className="text-sm">
-                <Link href="/auth/forgot-password" className="text-[#166534] hover:text-green-700">
-                  Forgot your password?
-                </Link>
               </div>
             </div>
-            
+
             <div>
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-white bg-[#166534] hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#166534] disabled:opacity-70"
+                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
               >
                 {loading ? 'Signing in...' : 'Sign in'}
               </button>
             </div>
           </form>
-          
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Don&apos;t have an account?{' '}
-              <Link href="/auth/register" className="text-[#166534] hover:text-green-700">
-                Contact administrator
-              </Link>
-            </p>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">
+                  Don't have an account?{' '}
+                  <Link href="/auth/register" className="font-medium text-green-600 hover:text-green-500">
+                    Register
+                  </Link>
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
-        
-        <div className="text-center mt-6">
-          <Link href="/" className="text-sm text-gray-600 hover:text-[#166534]">
-            &larr; Back to Home
-          </Link>
         </div>
       </div>
     </div>

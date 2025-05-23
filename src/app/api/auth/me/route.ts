@@ -1,27 +1,28 @@
 // src/app/api/auth/me/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser } from '@/lib/utils/auth';
+import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { verifyAuth } from '@/lib/auth';
 
-export async function GET(request: NextRequest) {
+export const dynamic = 'force-dynamic';
+
+export async function GET() {
   try {
-    // Get current user
-    const user = await getCurrentUser();
-    
-    if (!user) {
+    const cookieStore = cookies();
+    const token = cookieStore.get('token')?.value;
+
+    if (!token) {
       return NextResponse.json(
-        { success: false, error: 'Not authenticated' },
+        { error: 'Not authenticated' },
         { status: 401 }
       );
     }
-    
-    return NextResponse.json({
-      success: true,
-      data: { user },
-    });
+
+    const user = await verifyAuth(token);
+    return NextResponse.json(user);
   } catch (error) {
     console.error('Get current user error:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to get current user' },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
