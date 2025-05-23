@@ -6,6 +6,7 @@ const nextConfig = {
   experimental: {
     serverActions: true,
   },
+  output: 'standalone',
   async headers() {
     return [
       {
