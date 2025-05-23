@@ -1,4 +1,4 @@
-# Thrive Africa Tractor Platform
+# Thrive Rwanda Tractor Platform
 
 A full-stack Next.js application for connecting smallholder farmers with mechanization service providers in Africa.
 

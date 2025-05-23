@@ -141,7 +141,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-white/20 mt-10 pt-6 text-center text-white/60">
-          <p>© {new Date().getFullYear()} Thrive Africa Tractor Platform. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Thrive Rwanda Tractor Platform. All rights reserved.</p>
         </div>
       </div>
     </footer>

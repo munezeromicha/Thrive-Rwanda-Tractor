@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getEquipment } from '@/actions/equipment';
+import { getEquipment, deleteEquipment } from '@/actions/equipment';
 import { IEquipment } from '@/models/equipment';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -34,12 +34,8 @@ export default function AdminEquipmentPage() {
     if (!confirm('Are you sure you want to delete this equipment?')) return;
 
     try {
-      const response = await fetch(`/api/equipment/${equipmentId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) throw new Error('Failed to delete equipment');
-
+      await deleteEquipment(equipmentId);
+      
       // Remove the deleted item from state
       setEquipment(prev => prev.filter(item => item._id !== equipmentId));
       router.refresh();

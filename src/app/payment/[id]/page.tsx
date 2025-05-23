@@ -95,7 +95,7 @@ export default function PaymentPage({ params }: PaymentPageProps) {
       phone_number: '0783692429'  // You should replace this with actual phone number from booking
     },
     customizations: {
-      title: 'Thrive Africa Tractor Platform',
+      title: 'Thrive Rwanda Tractor Platform',
       description: `Payment for ${equipment.name}`,
       logo: 'https://thriveafrica.com/logo.png',
     },

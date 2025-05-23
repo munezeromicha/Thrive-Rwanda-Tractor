@@ -124,7 +124,7 @@ export function getAdminEmailTemplate(fullName: string, email: string, subject: 
         </div>
         
         <div class="footer">
-          <p>This message was sent from the contact form on Thrive Africa Tractor Platform.</p>
+          <p>This message was sent from the contact form on Thrive Rwanda Tractor Platform.</p>
           <p>&copy; ${new Date().getFullYear()} Thrive Africa Tractor. All rights reserved.</p>
         </div>
       </div>

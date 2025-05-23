@@ -81,6 +81,62 @@ export async function uploadEquipment(formData: FormData) {
   }
 }
 
+export async function updateEquipment(id: string, formData: FormData) {
+  try {
+    await dbConnect();
+    
+    const name = formData.get('name') as string;
+    const description = formData.get('description') as string;
+    const shortDescription = formData.get('shortDescription') as string;
+    const price = parseFloat(formData.get('price') as string);
+    const category = formData.get('category') as string;
+    const isAvailable = formData.get('isAvailable') === 'true';
+    const image = formData.get('image') as File | null;
+
+    // Validate required fields
+    if (!name || !description || !shortDescription || !price || !category) {
+      throw new Error('Missing required fields');
+    }
+
+    // Get existing equipment
+    const existingEquipment = await Equipment.findById(id);
+    if (!existingEquipment) {
+      throw new Error('Equipment not found');
+    }
+
+    // Update equipment data
+    const updateData: any = {
+      name,
+      description,
+      shortDescription,
+      price,
+      category,
+      isAvailable,
+    };
+
+    // Handle image upload if new image is provided
+    if (image) {
+      const imageUrl = await uploadToCloudinary(image);
+      updateData.imageUrl = imageUrl;
+    }
+
+    // Update equipment
+    const updatedEquipment = await Equipment.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true }
+    );
+
+    revalidatePath('/equipment');
+    revalidatePath('/admin/equipment');
+    
+    return JSON.parse(JSON.stringify(updatedEquipment));
+  } catch (error) {
+    console.error('Failed to update equipment:', error);
+    throw new Error('Failed to update equipment');
+  }
+}
+
 export async function updateEquipmentAvailability(id: string, isAvailable: boolean) {
   try {
     await dbConnect();

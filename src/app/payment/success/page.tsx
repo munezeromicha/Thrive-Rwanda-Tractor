@@ -23,7 +23,7 @@ export default function PaymentSuccessPage() {
           
           <div className="border-t border-gray-200 pt-6 mt-6">
             <p className="text-gray-600 mb-6">
-              Thank you for using Thrive Africa Tractor Platform. Our team will 
+              Thank you for using Thrive Rwanda Tractor Platform. Our team will 
               contact you soon to coordinate the service.
             </p>
             

@@ -5,6 +5,10 @@ import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import aboutHero from '../../../public/images/image/tr_2.jpg';
 import missionImg from '../../../public/images/image/img1.jpg';
+import TeamSection from '@/components/sections/TeamSection';
+import augustinImg from '../../../public/images/image/augustin.jpg';
+import honorineImg from '../../../public/images/image/honorine.jpg';
+import michelImg from '../../../public/images/image/michel.jpg';
 
 export default function AboutPage() {
   return (
@@ -37,7 +41,7 @@ export default function AboutPage() {
         <div className="py-16 md:py-24">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-              <div className="relative h-[400px] rounded-xl overflow-hidden">
+              <div className="relative h-[500px] rounded-xl overflow-hidden">
                 <Image
                   src={missionImg}
                   alt="Our Mission"
@@ -127,6 +131,45 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
+
+        {/* Team Section */}
+        <TeamSection
+          members={[
+            {
+              name: "NKUNDIMANA Augustin",
+              role: "Founder",
+              email: "aunkundimana@gmail.com",
+              image: augustinImg.src,
+              social: {
+                x: "https://x.com/aunkundimana?t=U6dxiagDsyftJRh33eHimw&s=09",
+                linkedin: "https://www.linkedin.com/in/augustin-nkundimana-162349257?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+                whatsapp: "https://wa.me/250783692429"
+              }
+            },
+            {
+              name: "UWASE Honorine",
+              role: "Marketing",
+              email: "honorine@example.com",
+              image: honorineImg.src,
+              social: {
+                x: "https://x.com/honorine",
+                linkedin: "https://linkedin.com/in/honorine",
+                whatsapp: "https://wa.me/your_number"
+              }
+            },
+            {
+              name: "MUNEZERO NTAGANIRA Michel",
+              role: "Software Developer",
+              email: "munezerontaganiramichel@gmail.com",
+              image: michelImg.src,
+              social: {
+                x: "https://x.com/michel_munezero",
+                linkedin: "https://www.linkedin.com/in/munezero-ntaganira-michel-062187265/",
+                whatsapp: "https://wa.me/250790962901"
+              }
+            }
+          ]}
+        />
 
         {/* Call to Action */}
         <div className="bg-[#166534] py-16">

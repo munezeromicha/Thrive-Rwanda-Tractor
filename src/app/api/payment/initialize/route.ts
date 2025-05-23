@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
         name: booking.fullName,
       },
       customizations: {
-        title: 'Thrive Africa Tractor Platform',
+        title: 'Thrive Rwanda Tractor Platform',
         description: `Payment for ${equipment.name}`,
         logo: `${process.env.NEXT_PUBLIC_APP_URL}/images/logo.png`,
       },
