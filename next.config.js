@@ -3,10 +3,11 @@ const nextConfig = {
   images: {
     domains: ['images.unsplash.com', 'res.cloudinary.com'],
   },
-  experimental: {
-    serverActions: true,
-  },
   output: 'standalone',
+  webpack: (config) => {
+    config.externals = [...(config.externals || []), { 'utf-8-validate': 'commonjs utf-8-validate', 'bufferutil': 'commonjs bufferutil' }];
+    return config;
+  },
   async headers() {
     return [
       {
