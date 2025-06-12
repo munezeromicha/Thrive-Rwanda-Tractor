@@ -97,12 +97,6 @@ export default function LoginPage() {
           <div className="mt-6">
             <div className="relative">
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
-                  Don't have an account?{' '}
-                  <Link href="/auth/register" className="font-medium text-green-600 hover:text-green-500">
-                    Register
-                  </Link>
-                </span>
               </div>
             </div>
           </div>

@@ -118,10 +118,10 @@ export default function AboutPage() {
             <h2 className="text-3xl font-bold text-center text-[#166534] mb-12">Our Impact</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               {[
-                { number: "1000+", label: "Farmers Served" },
-                { number: "500+", label: "Equipment Registered" },
-                { number: "20+", label: "Districts Covered" },
-                { number: "95%", label: "Satisfaction Rate" }
+                { number: "0", label: "Farmers Served" },
+                { number: "0", label: "Equipment Registered" },
+                { number: "0", label: "Districts Covered" },
+                { number: "0%", label: "Satisfaction Rate" }
               ].map((stat, index) => (
                 <div key={index} className="text-center">
                   <div className="text-4xl font-bold text-[#166534] mb-2">{stat.number}</div>
