@@ -22,7 +22,7 @@ export default function LoginPage() {
 
     try {
       await login(formData.email, formData.password);
-      router.push('/dashboard');
+      router.push('/admin');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to login');
     } finally {
