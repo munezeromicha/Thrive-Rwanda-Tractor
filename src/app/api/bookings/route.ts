@@ -6,15 +6,26 @@ import Equipment from '@/models/equipment';
 import { getCurrentUser } from '@/lib/utils/auth';
 import { fetchRealtimeData, createRealtimeResponse } from '@/lib/utils/realtime';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET(request: NextRequest) {
   try {
     const user = await getCurrentUser();
     
     if (!user || user.role !== 'admin') {
-      return createRealtimeResponse({
-        success: false,
-        error: 'Unauthorized'
-      });
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { 
+          status: 401,
+          headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+            'Surrogate-Control': 'no-store'
+          }
+        }
+      );
     }
     
     const searchParams = request.nextUrl.searchParams;
@@ -23,23 +34,23 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '10');
     const skip = (page - 1) * limit;
     
-    const result = await fetchRealtimeData(async () => {
-      await dbConnect();
-      
-      let query = {};
-      if (status) {
-        query = { status };
-      }
-      
-      const totalCount = await Booking.countDocuments(query);
-      const bookings = await Booking.find(query)
-        .populate('equipmentId')
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean();
-      
-      return {
+    await dbConnect();
+    
+    let query = {};
+    if (status) {
+      query = { status };
+    }
+    
+    const totalCount = await Booking.countDocuments(query);
+    const bookings = await Booking.find(query)
+      .populate('equipmentId')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
+    
+    return NextResponse.json(
+      {
         success: true,
         data: {
           bookings: JSON.parse(JSON.stringify(bookings)),
@@ -47,16 +58,30 @@ export async function GET(request: NextRequest) {
           page,
           limit,
         },
-      };
-    });
-
-    return createRealtimeResponse(result);
+      },
+      {
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'Surrogate-Control': 'no-store'
+        }
+      }
+    );
   } catch (error) {
     console.error('Get bookings error:', error);
-    return createRealtimeResponse({
-      success: false,
-      error: 'Failed to get bookings'
-    });
+    return NextResponse.json(
+      { success: false, error: 'Failed to get bookings' },
+      { 
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+          'Surrogate-Control': 'no-store'
+        }
+      }
+    );
   }
 }
 

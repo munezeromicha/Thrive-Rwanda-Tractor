@@ -86,9 +86,22 @@ export async function getBookings(status?: string) {
       query = query.find({ status });
     }
     
-    const bookings = await query.sort({ createdAt: -1 }).populate('equipmentId').lean();
+    const bookings = await query
+      .sort({ createdAt: -1 })
+      .populate('equipmentId')
+      .lean();
     
-    return JSON.parse(JSON.stringify(bookings));
+    // Force a fresh copy of the data
+    const freshBookings = JSON.parse(JSON.stringify(bookings));
+    
+    // Add cache control headers
+    const headers = new Headers();
+    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    headers.set('Pragma', 'no-cache');
+    headers.set('Expires', '0');
+    headers.set('Surrogate-Control', 'no-store');
+    
+    return freshBookings;
   } catch (error) {
     console.error('Failed to fetch bookings:', error);
     throw new Error('Failed to fetch bookings');

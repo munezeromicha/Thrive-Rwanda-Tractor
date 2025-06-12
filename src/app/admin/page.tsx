@@ -6,6 +6,9 @@ import { IEquipment } from '@/models/equipment';
 import Link from 'next/link';
 import Image from 'next/image';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function AdminDashboard() {
   const equipment = await getEquipment();
   const recentBookings = await getBookings();
@@ -69,7 +72,7 @@ export default async function AdminDashboard() {
         </div>
         
         {/* Recent Bookings */}
-        <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="px-6 py-4 bg-[#166534]">
             <h2 className="text-xl font-semibold text-white">Recent Bookings</h2>
           </div>
