@@ -4,62 +4,59 @@ import dbConnect from '@/lib/mongodb';
 import Booking from '@/models/booking';
 import Equipment from '@/models/equipment';
 import { getCurrentUser } from '@/lib/utils/auth';
+import { fetchRealtimeData, createRealtimeResponse } from '@/lib/utils/realtime';
 
 export async function GET(request: NextRequest) {
   try {
-    // Get current user
     const user = await getCurrentUser();
     
-    // If not admin, return unauthorized
     if (!user || user.role !== 'admin') {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return createRealtimeResponse({
+        success: false,
+        error: 'Unauthorized'
+      });
     }
     
-    // Get query parameters
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get('status');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const skip = (page - 1) * limit;
     
-    await dbConnect();
-    
-    // Build query
-    let query = {};
-    
-    if (status) {
-      query = { status };
-    }
-    
-    // Get total count
-    const totalCount = await Booking.countDocuments(query);
-    
-    // Get bookings
-    const bookings = await Booking.find(query)
-      .populate('equipmentId')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean();
-    
-    return NextResponse.json({
-      success: true,
-      data: {
-        bookings: JSON.parse(JSON.stringify(bookings)),
-        totalCount,
-        page,
-        limit,
-      },
+    const result = await fetchRealtimeData(async () => {
+      await dbConnect();
+      
+      let query = {};
+      if (status) {
+        query = { status };
+      }
+      
+      const totalCount = await Booking.countDocuments(query);
+      const bookings = await Booking.find(query)
+        .populate('equipmentId')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean();
+      
+      return {
+        success: true,
+        data: {
+          bookings: JSON.parse(JSON.stringify(bookings)),
+          totalCount,
+          page,
+          limit,
+        },
+      };
     });
+
+    return createRealtimeResponse(result);
   } catch (error) {
     console.error('Get bookings error:', error);
-    return NextResponse.json(
-      { success: false, error: 'Failed to get bookings' },
-      { status: 500 }
-    );
+    return createRealtimeResponse({
+      success: false,
+      error: 'Failed to get bookings'
+    });
   }
 }
 

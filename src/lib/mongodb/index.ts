@@ -28,9 +28,15 @@ async function dbConnect() {
     const opts = {
       bufferCommands: false,
       maxPoolSize: 10,
+      minPoolSize: 5,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
-      family: 4
+      family: 4,
+      keepAlive: true,
+      keepAliveInitialDelay: 300000,
+      autoIndex: true,
+      retryWrites: true,
+      retryReads: true
     };
 
     console.log('Connecting to MongoDB...');
@@ -66,6 +72,11 @@ async function dbConnect() {
     console.log('MongoDB disconnected');
     cached.conn = null;
     cached.promise = null;
+  });
+
+  // Handle reconnection
+  mongoose.connection.on('reconnected', () => {
+    console.log('MongoDB reconnected');
   });
 
   return cached.conn;
